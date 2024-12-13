@@ -7,9 +7,6 @@ import javax.swing.JFrame;
 
 public class DashedLines extends JFrame {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -6549905258295550911L;
 
 	public DashedLines() {

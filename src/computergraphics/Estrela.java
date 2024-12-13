@@ -11,7 +11,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
-public class Estrelas extends JFrame {
+public class Estrela extends JFrame {
 
 	private static final long serialVersionUID = -609312063830031858L;
 	private final int MAX_RES_X = 1024;
@@ -19,7 +19,7 @@ public class Estrelas extends JFrame {
 	private final int ARESTA = 200;
 	private final int VERTICES = 5;
 
-	public Estrelas() {
+	public Estrela() {
 		super("Estrelas");
 		setSize(MAX_RES_X, MAX_RES_Y);
 		setVisible(true);
@@ -82,7 +82,7 @@ public class Estrelas extends JFrame {
 	}
 
 	public static void main(String[] args) {
-		Estrelas obj = new Estrelas();
+		Estrela obj = new Estrela();
 		obj.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 

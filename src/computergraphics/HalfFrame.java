@@ -8,7 +8,7 @@ import javax.swing.JFrame;
 public class HalfFrame extends JFrame {
 
 	private static final long serialVersionUID = 5789981426446811822L;
-	private int MAX_RES_X = 900, MAX_RES_Y = 700;
+	private int MAX_RES_X = 900, MAX_RES_Y = 600;
 
 	public HalfFrame() {
 		super("Half Frame");
@@ -19,34 +19,63 @@ public class HalfFrame extends JFrame {
 	public void paint(Graphics g) {
 		super.paint(g);
 		g.setColor(Color.BLUE);
-		int dx = 10, dy = 30;
-		for (int i = 0; i <= 15; i++) {
-			int origemX = 800;
-			int origemY = 0;
-			int destinoX = 50 * i;
-			int destinoY = destinoX * 3 / 4;
-			g.drawLine(origemX + dx, origemY + dy, destinoX + dx, destinoY + dy);
-		}
-		for (int i = 0; i <= 15; i++) {
-			int origemX = 0;
-			int origemY = 600;
-			int destinoX = 50 * i;
-			int destinoY = destinoX * 3 / 4;
-			g.drawLine(origemX + dx, origemY + dy, destinoX + dx, destinoY + dy);
-		}
-		for (int i = 0; i <= 15; i++) {
+		int padding = 30, divisions = 20, stepX = MAX_RES_X / divisions, stepY = MAX_RES_Y / divisions;
+		for (int i = 0; i < divisions; i++) {
 			int origemX = 0;
 			int origemY = 0;
-			int destinoX = 50 * i;
-			int destinoY = 600 - destinoX * 3 / 4;
-			g.drawLine(origemX + dx, origemY + dy, destinoX + dx, destinoY + dy);
+			int destinoX = stepX * i;
+			int destinoY = MAX_RES_Y - 60;
+			g.drawLine(origemX + padding, origemY + padding, destinoX + padding, destinoY + padding);
 		}
-		for (int i = 0; i <= 15; i++) {
-			int origemX = 800;
-			int origemY = 600;
-			int destinoX = 50 * i;
-			int destinoY = 600 - destinoX * 3 / 4;
-			g.drawLine(origemX + dx, origemY + dy, destinoX + dx, destinoY + dy);
+		for (int i = 0; i < divisions; i++) {
+			int origemX = (divisions - 1) * stepX;
+			int origemY = 0;
+			int destinoX = stepX * i;
+			int destinoY = MAX_RES_Y - 60;
+			g.drawLine(origemX + padding, origemY + padding, destinoX + padding, destinoY + padding);
+		}
+		for (int i = 0; i < divisions; i++) {
+			int origemX = 0;
+			int origemY = MAX_RES_Y - 60;
+			int destinoX = stepX * i;
+			int destinoY = 0;
+			g.drawLine(origemX + padding, origemY + padding, destinoX + padding, destinoY + padding);
+		}
+		for (int i = 0; i < divisions; i++) {
+			int origemX = (divisions - 1) * stepX;
+			int origemY = MAX_RES_Y - 60;
+			int destinoX = stepX * i;
+			int destinoY = 0;
+			g.drawLine(origemX + padding, origemY + padding, destinoX + padding, destinoY + padding);
+		}
+		
+		for (int i = 0; i < divisions; i++) {
+			int origemX = 0;
+			int origemY = 0;
+			int destinoX = (divisions - 1) * stepX;
+			int destinoY = stepY * i;
+			g.drawLine(origemX + padding, origemY + padding, destinoX + padding, destinoY + padding);
+		}
+		for (int i = 0; i < divisions; i++) {
+			int origemX = (divisions - 1) * stepX;
+			int origemY = 0;
+			int destinoX = 0;
+			int destinoY = stepY * i;
+			g.drawLine(origemX + padding, origemY + padding, destinoX + padding, destinoY + padding);
+		}
+		for (int i = 0; i < divisions; i++) {
+			int origemX = 0;
+			int origemY = MAX_RES_Y - 60;
+			int destinoX = (divisions - 1) * stepX;
+			int destinoY = stepY * i;
+			g.drawLine(origemX + padding, origemY + padding, destinoX + padding, destinoY + padding);
+		}
+		for (int i = 0; i < divisions; i++) {
+			int origemX = (divisions - 1) * stepX;
+			int origemY = MAX_RES_Y - 60;
+			int destinoX = 0;
+			int destinoY = stepY * i;;
+			g.drawLine(origemX + padding, origemY + padding, destinoX + padding, destinoY + padding);
 		}
 	}
 

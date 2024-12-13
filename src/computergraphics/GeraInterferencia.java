@@ -25,7 +25,7 @@ public class GeraInterferencia {
 			FileOutputStream fos1 = new FileOutputStream( "resources/ruido.bmp" );
 			BufferedOutputStream bos1 = new BufferedOutputStream( fos1 );
 			byte[ ] randomOut = new byte[ SIZE ];
-			int ROLETA = 2; // tamanho da roleta
+			int ROLETA = 100; // tamanho da roleta
 			for ( int k = 0; k < SIZE; k++ ) {
 				int sorteio = ( int ) ( ROLETA * Math.random( ) );
 				if ( sorteio == 1 ) {
@@ -57,6 +57,7 @@ public class GeraInterferencia {
 			bos2.write( dataOut );
 			bos2.close( );
 			fos2.close( );
+			System.out.println("done.");
 		}
 		catch ( IOException e ) {
 			e.printStackTrace( );

@@ -13,7 +13,7 @@ import javax.swing.JOptionPane;
 
 // you can upload the resulting files in
 // https://ezgif.com/apng-maker
-public class GIFGenerator extends JFrame {
+public class PNGGenerator extends JFrame {
 
 	private static final long serialVersionUID = -4076029987688325673L;
 	private final int LARGURA = 600;
@@ -21,7 +21,7 @@ public class GIFGenerator extends JFrame {
 	private final int RAIO = 200;
 	private int N;
 
-	public GIFGenerator() {
+	public PNGGenerator() {
 		super("GIF Generator");
 		N = Integer.valueOf(JOptionPane.showInputDialog("Informe a quantidade de lados"));
 		setSize(LARGURA, ALTURA);
@@ -55,19 +55,6 @@ public class GIFGenerator extends JFrame {
 			}
 		}
 		int countFiles = 0;
-		try {
-			String fileName = "resources/animated";
-			if (countFiles < 10) {
-				fileName = fileName + "0" + countFiles + ".png";
-			} else {
-				fileName = fileName + countFiles + ".png";
-			}
-			FileOutputStream file = new FileOutputStream(fileName);
-			ImageIO.write(bufferedImage, "png", file);
-			countFiles++;
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 		if (N % 2 == 1) { // N is odd, let's find a Euler's cycle!
 			int jumps = (N - 1) / 2;
 			for (int k = 1; k <= jumps; k++) {
@@ -105,7 +92,7 @@ public class GIFGenerator extends JFrame {
 	}
 
 	public static void main(String[] args) {
-		GIFGenerator obj = new GIFGenerator();
+		PNGGenerator obj = new PNGGenerator();
 		obj.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 
