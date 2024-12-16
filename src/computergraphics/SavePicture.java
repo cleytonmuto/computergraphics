@@ -25,18 +25,27 @@ public class SavePicture extends JFrame {
 	}
 
 	public void paint(Graphics g) {
-		BufferedImage bufferedImage = new BufferedImage(800, MAX_HEIGHT, BufferedImage.TYPE_INT_RGB);
+		BufferedImage bufferedImage = new BufferedImage(MAX_WIDTH, MAX_HEIGHT, BufferedImage.TYPE_INT_RGB);
 		Graphics2D gg = bufferedImage.createGraphics();
 		g.setColor(Color.white);
 		g.fillRect(0, 0, MAX_WIDTH, MAX_HEIGHT);
-		g.setColor(Color.blue);
-		g.drawLine(100, 100, MAX_WIDTH / 2, MAX_HEIGHT / 2);
 		gg.setColor(Color.white);
-		gg.fillRect(0, 0, 800, MAX_HEIGHT);
-		gg.setColor(Color.blue);
-		gg.drawLine(100, 100, MAX_WIDTH / 2, MAX_HEIGHT / 2);
+		gg.fillRect(0, 0, MAX_WIDTH, MAX_HEIGHT);
+		for (int i = 0; i < 20; i++) {
+			int red = (int) ( 256 * Math.random());
+			int green = (int) ( 256 * Math.random());
+			int blue = (int) ( 256 * Math.random());
+			int x1 = (int) (MAX_WIDTH * Math.random() / 2.0);
+			int y1 = (int) (MAX_HEIGHT * Math.random() / 2.0);
+			int x2 = (int) (MAX_WIDTH * Math.random() / 2.0);
+			int y2 = (int) (MAX_HEIGHT * Math.random() / 2.0);
+			g.setColor(new Color(red, green, blue));
+			g.drawLine(x1,  y1,  x2,  y2);
+			gg.setColor(new Color(red, green, blue));
+			gg.drawLine(x1,  y1,  x2,  y2);
+		}
 		try {
-			FileOutputStream file = new FileOutputStream("resources/desenho_teste.png");
+			FileOutputStream file = new FileOutputStream("resources/desenho.png");
 			ImageIO.write(bufferedImage, "png", file);
 		} catch (IOException e) {
 			e.printStackTrace();

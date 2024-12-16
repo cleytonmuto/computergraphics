@@ -13,7 +13,7 @@ public class NonEscapeMandelbrot extends JFrame implements MouseListener {
 
 	private static final long serialVersionUID = -7429779026409169909L;
 	private int MAX_RES_X = 800, MAX_RES_Y = 600;
-	private double xmin = -8, xmax = 8, ymin = -6, ymax = 6;
+	private double xmin = -2, xmax = 2, ymin = -1.5, ymax = 1.5;
 	private int[] paletteR = new int[240000];
 	private int[] paletteG = new int[240000];
 	private int[] paletteB = new int[240000];

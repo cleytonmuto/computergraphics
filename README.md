@@ -32,5 +32,27 @@
 * GeraInterferencia: injeta ruído em uma imagem, através da substituição de alguns pixels da imagem original por pixels aleatórios
 * GraphicalWriting: utiliza o método drawString() para desenhar texto na tela
 * HalfFrame: desenha uma imagem retangular simétrica com segmentos do vértice à diagonal
-
+* HelloWorld: exemplo de uso de `drawString`
+* IlusaoDeOptica: [ilusão de óptica da grade](https://en.wikipedia.org/wiki/Grid_illusion)
+* ImageFiltering: processamento de imagens com uso de [sharpening filter kernel](https://en.wikipedia.org/wiki/Kernel_(image_processing))
+* InsertionSort: insertion sort animado
+* LoadPicture: carrega e exibe duas imagens PNG, uma das quais é transparente
+* Mandelbrot: implementação do [fractal de Mandebrot](https://en.wikipedia.org/wiki/Mandelbrot_set)
+* NonEscapeMandelbrot: implementação do [fractal de Mandebrot](https://en.wikipedia.org/wiki/Mandelbrot_set) com diferentes cores
 * PNGGenerator: lê a quantidade N de vértices de um polígono regular; se for ímpar, desenha um grafo regular completo, assim como vários PNGs que descrevem um ciclo de Euler, os quais podem ser carregados em um [site de fusão de imagens](https://ezgif.com/apng-maker) para criar um único PNG animado
+* QuatroCores: uma figura geométrica para ser colorida, segundo o [Teorema das Quatro Cores](https://en.wikipedia.org/wiki/Four_color_theorem)
+* RandomLines: vários segmentos de retas com cores e comprimentos aleatórios
+* RandomStrings: uma mesma string, escrita repetidas vezes, com cores e posições aleatórias
+* RandomTriangles: diversos triângulos com tamanhos e cores aleatórias
+* RetasColoridas: retas coloridas no caleidoscópio
+* Rotacao: rotação de uma seta
+* RotacaoBemFeita: 
+* RotacaoMalFeita: rotação com erro de cálculo
+* SavePicture: exibe e salva uma imagem aleatória em um arquivo PNG
+* SelectionSort: 
+* Stroke1: 
+* SwapRedForBlue: 
+* TesteCores: 
+* TesteRGB: 
+* TestInsertionSort: 
+* UlamSpiral: 

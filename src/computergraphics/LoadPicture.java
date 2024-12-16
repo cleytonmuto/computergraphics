@@ -23,7 +23,7 @@ public class LoadPicture extends JFrame {
 		BufferedImage imagem2 = null;
 		try {
 			imagem1 = ImageIO.read(new File("resources/lenna.png"));
-			imagem2 = ImageIO.read(new File("resources/desenho.png"));
+			imagem2 = ImageIO.read(new File("resources/transparente.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

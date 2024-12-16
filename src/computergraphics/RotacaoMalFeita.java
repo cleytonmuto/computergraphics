@@ -32,10 +32,6 @@ public class RotacaoMalFeita extends JFrame {
 		Polygon polygon = new Polygon(coordX, coordY, 4);
 		g.setColor(Color.black);
 		g.drawPolygon(polygon);
-		/**
-		 * g.setColor( Color.cyan ); for ( int i = 0; i < 4; i++ ) { drawCircle( g, 0,
-		 * 0, distance( 0, 0, coordX[ i ], coordY[ i ] ) ); }
-		 */
 		int[] coordX_ = new int[4];
 		int[] coordY_ = new int[4];
 		double angle = Math.PI / 3;
@@ -46,16 +42,6 @@ public class RotacaoMalFeita extends JFrame {
 		Polygon polygon_ = new Polygon(coordX_, coordY_, 4);
 		g.setColor(Color.black);
 		g.drawPolygon(polygon_);
-		/**
-		 * for ( int i = 0; i < 4; i++ ) { System.out.print( "distancia entre o ponto "
-		 * + ( i + 1 ) + " e o ponto " + ( ( i + 2 ) % 4 ) + " vale " );
-		 * System.out.println( distance( coordX[ i ], coordY[ i ], coordX[ ( i + 1 ) % 4
-		 * ], coordY[ ( i + 1 ) % 4 ] ) ); } System.out.println( ); for ( int i = 0; i <
-		 * 4; i++ ) { System.out.print( "distancia entre o ponto " + ( i + 1 ) + "_ e o
-		 * ponto " + ( ( i + 2 ) % 4 ) + "_ vale " ); System.out.println( distance(
-		 * coordX_[ i ], coordY_[ i ], coordX_[ ( i + 1 ) % 4 ], coordY_[ ( i + 1 ) % 4
-		 * ] ) ); }
-		 */
 	}
 	
 	public static void main(String[] args) {
