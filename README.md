@@ -46,13 +46,11 @@
 * RandomTriangles: diversos triângulos com tamanhos e cores aleatórias
 * RetasColoridas: retas coloridas no caleidoscópio
 * Rotacao: rotação de uma seta
-* RotacaoBemFeita: 
-* RotacaoMalFeita: rotação com erro de cálculo
+* RotacaoBemFeita: rotação de uma imagem
+* RotacaoMalFeita: rotação imperfeita
 * SavePicture: exibe e salva uma imagem aleatória em um arquivo PNG
-* SelectionSort: 
-* Stroke1: 
-* SwapRedForBlue: 
-* TesteCores: 
-* TesteRGB: 
-* TestInsertionSort: 
-* UlamSpiral: 
+* SelectionSort: selection sort animado
+* SwapRedForBlue: troca do componente azul pelo componente vermelho, e vice-versa, em um bitmap
+* TesteCores: teste de paleta para gerar as cores marrom, índigo, violeta
+* TesteRGB: teste de paleta RGB e CMY
+* UlamSpiral: implementação da [espiral de Ulam](https://en.wikipedia.org/wiki/Ulam_spiral)

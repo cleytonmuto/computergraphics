@@ -86,8 +86,8 @@ public class UlamSpiral extends JFrame {
 		gg.fillRect(0, 0, MAX_RES_X, MAX_RES_Y);
 		for (int i = 0; i < MAX_RES_X; i++) {
 			for (int j = 0; j < MAX_RES_Y; j++) {
-				g.setColor(matriz[j][i] ? Color.green : Color.black);
-				gg.setColor(matriz[j][i] ? Color.green : Color.black);
+				g.setColor(matriz[j][i] ? Color.white : Color.black);
+				gg.setColor(matriz[j][i] ? Color.white : Color.black);
 				g.drawLine(i, j, i, j);
 				gg.drawLine(i, j, i, j);
 			}
