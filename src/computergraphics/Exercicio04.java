@@ -38,6 +38,7 @@ public class Exercicio04 extends JFrame {
 		double decremento = 10.0 / delta;
 		double divisor = 90.0 * delta;
 		for (int i = 0; i < (int) (RAIO / decremento); i++) {
+			g.setColor(new Color(0, 0, (int) (255 - raio / 4.0)));
 			for (int j = 0; j < N; j++) {
 				x[j] = centroX + (int) (raio * Math.cos(i * Math.PI / divisor + j * fase + step));
 				y[j] = centroY - (int) (raio * Math.sin(i * Math.PI / divisor + j * fase + step));

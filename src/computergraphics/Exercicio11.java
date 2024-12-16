@@ -7,11 +7,11 @@ import java.awt.Polygon;
 import javax.swing.JFrame;
 
 // paralelepipedo
-public class ExercicioN extends JFrame {
+public class Exercicio11 extends JFrame {
 
 	private static final long serialVersionUID = -8106386933546597194L;
 
-	public ExercicioN() {
+	public Exercicio11() {
 		super("ExercicioN");
 		setSize(800, 600);
 		setVisible(true);
@@ -41,7 +41,7 @@ public class ExercicioN extends JFrame {
 	}
 
 	public static void main(String[] args) {
-		ExercicioN obj = new ExercicioN();
+		Exercicio11 obj = new Exercicio11();
 		obj.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 

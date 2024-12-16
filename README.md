@@ -11,6 +11,22 @@
 * Embaralha: desenha uma mesma imagem em várias coordenadas aleatórias
 * Espiral: espiral geométrica quadrada
 * Estrela: de 5 pontas
+* Exemplo01: um segmento de reta (`drawLine`)
+* Exemplo02: uma elipse cheia (`fillOval`) e uma elipse vazia (`drawOval`)
+* Exemplo03: um hexágono regular (`drawPolyLine`)
+* Exemplo04: rotação de um polígono (`drawPolygon`)
+* Exemplo05: paleta de cores (`fillRect`)
+* Exercicio01: desenho de um envelope de carta com segmentos azuis e fundo amarelo
+* Exercicio02: desenho de um octágono regular
+* Exercicio03: um triângulo fractal
+* Exercicio04: vários triângulos semelhantes, de tamanhos decrescentes, em espiral
+* Exercicio05: dadas as coordenadas de um triângulo `(200,400), (600,300), (300,100)`, desenhar a circunferência circunscrita a esse triângulo
+* Exercicio06: paleta RGB em dégradé
+* Exercicio07: caleidoscópio
+* Exercicio08: um tabuleiro de xadrez
+* Exercicio09: uma senóide
+* Exercicio10: um pentagrama (estrela de 5 pontas)
+* Exercicio11: um paralelepípedo
 * GameOfLife: implementação do [Conway's Game of Life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life)
 * GeraGrafoAleatorio: gerador de grafo aleatório
 * GeraInterferencia: injeta ruído em uma imagem, através da substituição de alguns pixels da imagem original por pixels aleatórios
