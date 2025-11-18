@@ -2,12 +2,17 @@ package computergraphics;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 public class NonEscapeMandelbrot extends JFrame implements MouseListener {
 
@@ -17,14 +22,41 @@ public class NonEscapeMandelbrot extends JFrame implements MouseListener {
 	private int[] paletteR = new int[240000];
 	private int[] paletteG = new int[240000];
 	private int[] paletteB = new int[240000];
+	private volatile boolean isRendering = false;
+	private volatile BufferedImage currentImage = null;
+	private JPanel drawingPanel;
 
 	public NonEscapeMandelbrot() {
 		super("Fractal de Mandelbrot");
 		setSize(MAX_RES_X, MAX_RES_Y);
 		setResizable(false);
+		
+		// Create a double-buffered panel to prevent flickering
+		drawingPanel = new JPanel() {
+			private static final long serialVersionUID = 1L;
+			
+			@Override
+			protected void paintComponent(Graphics g) {
+				super.paintComponent(g);
+				BufferedImage img = currentImage;
+				if (img != null) {
+					g.drawImage(img, 0, 0, null);
+				} else {
+					g.setColor(Color.BLACK);
+					g.fillRect(0, 0, getWidth(), getHeight());
+				}
+			}
+		};
+		drawingPanel.setSize(MAX_RES_X, MAX_RES_Y);
+		drawingPanel.addMouseListener(this);
+		add(drawingPanel);
+		
 		setVisible(true);
-		addMouseListener(this);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		initPalette();
+		
+		// Start initial rendering
+		renderFractalParallel();
 	}
 
 	private void initPalette() {
@@ -60,98 +92,135 @@ public class NonEscapeMandelbrot extends JFrame implements MouseListener {
 		}
 	}
 
+	/**
+	 * Optimized Mandelbrot calculation - returns iteration count and final position
+	 * Uses x2/y2 optimization to avoid repeated multiplications
+	 */
 	public double[] mSetLevel(double cx, double cy, double maxIter) {
-		// function returning level set of a point
 		int iter = 0;
-		double x = 0, y = 0, temp = 0;
-		while ((iter < maxIter) && ((x * x + y * y) < 10000)) {
-			temp = x * x - y * y + cx;
-			y = 2 * x * y + cy;
-			// temp = x * x * x - 3 * x * y * y + cx;
-			// y = 3 * x * x * y - y * y * y + cy;
+		double x = 0.0, y = 0.0;
+		double x2 = 0.0, y2 = 0.0;
+		double temp;
+		
+		// Optimized: check x2 + y2 < 4.0 instead of 10000, and use x2/y2 to avoid recalculating squares
+		while (iter < maxIter && (x2 + y2) < 4.0) {
+			temp = x2 - y2 + cx;
+			y = 2.0 * x * y + cy;
 			x = temp;
+			x2 = x * x;
+			y2 = y * y;
 			iter++;
 		}
-		return (new double[] { x, y, iter });
+		return new double[] { x, y, iter };
 	}
 
+	/**
+	 * Multi-threaded parallel rendering for maximum performance
+	 */
+	private void renderFractalParallel() {
+		// Prevent multiple simultaneous renders
+		if (isRendering) {
+			return;
+		}
+		isRendering = true;
+		
+		// Run rendering in a separate thread to avoid blocking UI
+		new Thread(() -> {
+			long startTime = System.currentTimeMillis();
+			double maxIter = 200;
+			
+			BufferedImage buffImage = new BufferedImage(MAX_RES_X, MAX_RES_Y, BufferedImage.TYPE_INT_RGB);
+			
+			// Pre-calculate constants outside loops for better performance
+			final double xRange = xmax - xmin;
+			final double yRange = ymax - ymin;
+			final double xStep = xRange / (MAX_RES_X - 1);
+			final double yStep = yRange / (MAX_RES_Y - 1);
+			
+			// Get number of available CPU cores
+			int numThreads = Runtime.getRuntime().availableProcessors();
+			ExecutorService executor = Executors.newFixedThreadPool(numThreads);
+			
+			// Track progress for UI updates
+			AtomicInteger completedRows = new AtomicInteger(0);
+			final int updateInterval = Math.max(20, MAX_RES_Y / 8);
+			final AtomicInteger lastUpdateRow = new AtomicInteger(-updateInterval);
+			
+			// Split work into horizontal strips
+			int rowsPerThread = Math.max(1, MAX_RES_Y / numThreads);
+			
+			for (int threadId = 0; threadId < numThreads; threadId++) {
+				final int startRow = threadId * rowsPerThread;
+				final int endRow = (threadId == numThreads - 1) ? MAX_RES_Y : (threadId + 1) * rowsPerThread;
+				
+				executor.submit(() -> {
+					// Process this thread's strip of rows
+					for (int iy = startRow; iy < endRow; iy++) {
+						double cy = ymin + iy * yStep;
+						
+						for (int ix = 0; ix < MAX_RES_X; ix++) {
+							double cx = xmin + ix * xStep;
+							double[] array = mSetLevel(cx, cy, maxIter);
+							
+							// Calculate smooth iteration count
+							double magnitude = array[0] * array[0] + array[1] * array[1];
+							double temp;
+							if (magnitude > 0) {
+								temp = (array[2] + (Math.log(2.0 * Math.log(2.0))
+										- Math.log(Math.log(Math.sqrt(magnitude)))) / Math.log(2.0));
+							} else {
+								temp = array[2];
+							}
+							temp *= 1000.0;
+							
+							// Bounds check for palette array
+							int paletteIndex = (int) temp;
+							if (paletteIndex < 0) paletteIndex = 0;
+							if (paletteIndex >= 240000) paletteIndex = 239999;
+							
+							// Direct pixel access is much faster than drawLine
+							int rgb = (paletteR[paletteIndex] << 16) | (paletteG[paletteIndex] << 8) | paletteB[paletteIndex];
+							buffImage.setRGB(ix, iy, rgb);
+						}
+						
+						// Update progress and refresh UI periodically
+						int completed = completedRows.incrementAndGet();
+						if (completed - lastUpdateRow.get() >= updateInterval || completed == MAX_RES_Y) {
+							lastUpdateRow.set(completed);
+							SwingUtilities.invokeLater(() -> {
+								currentImage = buffImage;
+								drawingPanel.repaint();
+							});
+						}
+					}
+				});
+			}
+			
+			// Wait for all threads to complete
+			executor.shutdown();
+			try {
+				executor.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+			}
+			
+			// Final update
+			SwingUtilities.invokeLater(() -> {
+				currentImage = buffImage;
+				drawingPanel.repaint();
+				isRendering = false;
+				
+				long endTime = System.currentTimeMillis();
+				System.out.println("Rendering completed in " + (endTime - startTime) + " ms using " + numThreads + " threads");
+			});
+		}).start();
+	}
+
+	// Old paint method - rendering is now done via renderFractalParallel()
+	@Override
 	public void paint(Graphics g) {
 		super.paint(g);
-		double cx = 0, cy = 0;
-		double maxIter = 200;
-		int nx = MAX_RES_X;
-		int ny = MAX_RES_Y;
-
-		// Valores originais
-		// xmin = -0.14 , xmax = 0, ymin = -1, ymax = -0.9;
-		// double xmin = -0.07 , xmax = -0.035, ymin = -1, ymax = -0.975;
-
-		// O problema todo
-		// double xmin = -0.7 , xmax = 0, ymin = -1, ymax = -0.5;
-		// double xmin = -2.5 , xmax = 1.5, ymin = -1.5, ymax = 1.5;
-
-		// Mandelbrot zoom
-		// double xmin = -0.0525 , xmax = -0.035, ymin = -0.99375, ymax = -0.98125;
-		// double xmin = -0.048125 , xmax = -0.039375, ymin = -0.990625, ymax =
-		// -0.984375;
-
-		// Fronteira do universo
-		// double xmin = -0.14 , xmax = 0, ymin = -0.70, ymax = -0.60;
-		// double xmin = -0.21875 , xmax = -0.13125, ymin = -0.6875, ymax = -0.6250;
-
-		BufferedImage buffImage = new BufferedImage(MAX_RES_X, MAX_RES_Y, BufferedImage.TYPE_INT_RGB);
-		Graphics2D gg = buffImage.createGraphics();
-
-		int vermelho = 0, verde = 0, azul = 0;
-
-		for (int iy = 0; iy < ny; iy++) {
-			cy = ymin + iy * (ymax - ymin) / (ny - 1);
-			for (int ix = 0; ix < nx; ix++) {
-				cx = xmin + ix * (xmax - xmin) / (nx - 1);
-				double[] array = mSetLevel(cx, cy, maxIter);
-				double temp = (array[2] + (Math.log(2.0 * Math.log(2.0))
-						- Math.log(Math.log(Math.sqrt(array[0] * array[0] + array[1] * array[1])))) / Math.log(2.0));
-				temp *= 1000.0;
-				vermelho = paletteR[(int) temp];
-				verde = paletteG[(int) temp];
-				azul = paletteB[(int) temp];
-				g.setColor(new Color(vermelho, verde, azul));
-				// g.setColor( new Color( inverso[ vermelho ], inverso[ verde ], inverso[ azul ]
-				// ) );
-				// g.setColor( new Color( 255 - vermelho, 255 - verde, 255 - azul ) );
-				// g.setColor( new Color( inverso[ ( vermelho ^ 255 ) % 256 ], inverso[ ( verde
-				// ^ 255 ) % 256 ], inverso[ ( azul ^ 255 ) % 256 ] ) );
-				// g.setColor( new Color( ( inverso[ vermelho ] ^ 255 ) % 256, ( inverso[ verde
-				// ] ^ 255 ) % 256, ( inverso[ azul ] ^ 255 ) % 256 ) );
-
-				g.drawLine(ix, iy, ix, iy);
-				// Somente invers�o mod 257
-				// gg.setColor( new Color( inverso[ vermelho ], inverso[ verde ], inverso[ azul
-				// ] ) );
-				// Somente opera��o XOR
-				// gg.setColor( new Color( ( vermelho ^ 255 ) % 256, ( verde ^ 255 ) % 257, (
-				// azul ^ 255 ) % 256 ) );
-				// Invers�o mod 257 --> seguida de opera��o XOR
-				// gg.setColor( new Color( ( inverso[ vermelho ] ^ 255 ) % 256, ( inverso[ verde
-				// ] ^ 255 ) % 256, ( inverso[ azul ] ^ 255 ) % 256 ) );
-				// Opera��o XOR --> seguida de invers�o mod 256
-				// gg.setColor( new Color( inverso[ ( vermelho ^ 255 ) % 256 ], inverso[ ( verde
-				// ^ 255 ) % 256 ], inverso[ ( azul ^ 255 ) % 256 ] ) );
-				// Original
-				gg.setColor(new Color(vermelho, verde, azul));
-				gg.drawLine(ix, iy, ix, iy);
-			}
-		}
-
-		/*
-		 * try { //File arquivo = new File( "arquivo.bmp" ); //ImageIO.write( (
-		 * RenderedImage ) gg, "bmp", arquivo ); File f = new File( "arquivo.bmp" );
-		 * javax.imageio.stream.ImageOutputStream ios = ImageIO.createImageOutputStream(
-		 * f ); java.util.Iterator iterator = ImageIO.getImageWritersByFormatName( "bmp"
-		 * ); ImageWriter writer = ( ImageWriter ) iterator.next(); writer.setOutput(
-		 * ios ); writer.write( buffImage ); } catch ( IOException e ) {
-		 * e.printStackTrace(); }
-		 */
+		// Rendering is handled by renderFractalParallel() and displayed via JPanel
 	}
 
 	public void mousePressed(MouseEvent e) {
@@ -171,7 +240,7 @@ public class NonEscapeMandelbrot extends JFrame implements MouseListener {
 	}
 
 	public void mouseClicked(MouseEvent e) {
-		if (e.getButton() == 1) { // left button
+		if (e.getButton() == 1) { // left button - zoom in
 			double newX = xmin + (double) e.getX() * (xmax - xmin) / (double) MAX_RES_X;
 			double newXmin = newX - (xmax - xmin) / 4.0;
 			double newXmax = newX + (xmax - xmin) / 4.0;
@@ -182,8 +251,11 @@ public class NonEscapeMandelbrot extends JFrame implements MouseListener {
 			xmax = newXmax;
 			ymin = newYmin;
 			ymax = newYmax;
-			super.repaint();
-		} else if (e.getButton() == 3) { // right button
+			currentImage = null;
+			isRendering = false;
+			drawingPanel.repaint();
+			renderFractalParallel();
+		} else if (e.getButton() == 3) { // right button - zoom out
 			double newX = xmin + (double) e.getX() * (xmax - xmin) / (double) MAX_RES_X;
 			double newXmin = newX - (xmax - xmin);
 			double newXmax = newX + (xmax - xmin);
@@ -194,13 +266,19 @@ public class NonEscapeMandelbrot extends JFrame implements MouseListener {
 			xmax = newXmax;
 			ymin = newYmin;
 			ymax = newYmax;
-			super.repaint();
+			currentImage = null;
+			isRendering = false;
+			drawingPanel.repaint();
+			renderFractalParallel();
 		} else if (e.getButton() == 2) { // middle button = reset
-			xmin = -8;
-			xmax = 8;
-			ymin = -6;
-			ymax = 6;
-			super.repaint();
+			xmin = -2;
+			xmax = 2;
+			ymin = -1.5;
+			ymax = 1.5;
+			currentImage = null;
+			isRendering = false;
+			drawingPanel.repaint();
+			renderFractalParallel();
 		}
 	}
 
